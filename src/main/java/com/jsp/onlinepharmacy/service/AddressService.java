@@ -25,10 +25,30 @@ public class AddressService {
 		dto.setState(dbAddress.getState());
 		dto.setStreetName(dbAddress.getStreetName());
 		ResponseStructure<AddressDto> structure=new ResponseStructure<AddressDto>();
-		structure.setMessage("Address Saved successfully");
+		structure.setMessage("Address Saved Successfully");
 		structure.setStatus(HttpStatus.CREATED.value());
 		structure.setData(dto);
 		return new ResponseEntity<ResponseStructure<AddressDto>>(structure,HttpStatus.CREATED);
+	}
+
+	public ResponseEntity<ResponseStructure<AddressDto>> findAddressById(int addressId) {
+		Address dbAddress=addressDao.findAddressById(addressId);
+		if(dbAddress!=null) {
+			AddressDto dto=new AddressDto();
+			dto.setAddressId(dbAddress.getAddressId());
+			dto.setCity(dbAddress.getCity());
+			dto.setPincode(dbAddress.getPincode());
+			dto.setState(dbAddress.getState());
+			dto.setStreetName(dbAddress.getStreetName());
+			
+			ResponseStructure<AddressDto> structure=new ResponseStructure<AddressDto>();
+			structure.setMessage("AddressData saved successfully");
+			structure.setStatus(HttpStatus.FOUND.value());
+			structure.setData(dto);
+			return new ResponseEntity<ResponseStructure<AddressDto>>(structure,HttpStatus.FOUND);
+		}else {
+		return null;
+		}
 	}
 
 }
