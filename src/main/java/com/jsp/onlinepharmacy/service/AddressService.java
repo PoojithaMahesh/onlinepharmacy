@@ -51,4 +51,47 @@ public class AddressService {
 		}
 	}
 
+	public ResponseEntity<ResponseStructure<AddressDto>> updateAddress(int addressId, Address address) {
+		Address dbAddress=addressDao.updateAddress(addressId,address);
+		if(dbAddress!=null) {
+			
+			AddressDto dto=new AddressDto();
+			dto.setAddressId(dbAddress.getAddressId());
+			dto.setCity(dbAddress.getCity());
+			dto.setPincode(dbAddress.getPincode());
+			dto.setState(dbAddress.getState());
+			dto.setStreetName(dbAddress.getStreetName());
+			
+			ResponseStructure<AddressDto> structure=new ResponseStructure<AddressDto>();
+			structure.setMessage("Address updated successfully");
+			structure.setStatus(HttpStatus.OK.value());
+			structure.setData(dto);
+			return new ResponseEntity<ResponseStructure<AddressDto>>(structure,HttpStatus.OK);
+		}else {
+			return null;
+//			raise the exception addressidnotfoundexception
+		}
+	}
+
+	public ResponseEntity<ResponseStructure<AddressDto>> deleteAddress(int addressId) {
+		Address dbAddress=addressDao.deleteAddressById(addressId);
+		if(dbAddress!=null) {
+			
+			AddressDto dto=new AddressDto();
+			dto.setAddressId(dbAddress.getAddressId());
+			dto.setCity(dbAddress.getCity());
+			dto.setPincode(dbAddress.getPincode());
+			dto.setState(dbAddress.getState());
+			dto.setStreetName(dbAddress.getStreetName());
+			ResponseStructure<AddressDto> structure=new ResponseStructure<AddressDto>();
+			structure.setMessage("Address deleted successfully");
+			structure.setStatus(HttpStatus.GONE.value());
+			structure.setData(dto);
+			return new ResponseEntity<ResponseStructure<AddressDto>>(structure,HttpStatus.GONE);
+		}else {
+//			raise the exception
+			return null;
+		}
+	}
+
 }

@@ -25,4 +25,23 @@ public class AddressDao {
 		}
 		return null;
 	}
+
+	public Address updateAddress(int addressId, Address address) {
+		Optional<Address> optional=repo.findById(addressId);
+		if(optional.isEmpty()) {
+			return null;
+		}
+		address.setAddressId(addressId);
+		return repo.save(address);
+	}
+
+	public Address deleteAddressById(int addressId) {
+	Optional<Address> optional=repo.findById(addressId);
+	if(optional.isPresent()) {
+		Address address=optional.get();
+		repo.delete(address);
+		return address;
+	}
+		return null;
+	}
 }
