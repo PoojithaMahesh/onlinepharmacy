@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.jsp.onlinepharmacy.dao.AddressDao;
 import com.jsp.onlinepharmacy.dto.AddressDto;
 import com.jsp.onlinepharmacy.entity.Address;
+import com.jsp.onlinepharmacy.exception.AddressIdNotFoundException;
 import com.jsp.onlinepharmacy.util.ResponseStructure;
 
 @Service
@@ -47,7 +48,7 @@ public class AddressService {
 			structure.setData(dto);
 			return new ResponseEntity<ResponseStructure<AddressDto>>(structure,HttpStatus.FOUND);
 		}else {
-		return null;
+		throw new AddressIdNotFoundException("Sorry Failed to fetch the data");
 		}
 	}
 
@@ -68,7 +69,7 @@ public class AddressService {
 			structure.setData(dto);
 			return new ResponseEntity<ResponseStructure<AddressDto>>(structure,HttpStatus.OK);
 		}else {
-			return null;
+			throw new AddressIdNotFoundException("Sorry Failed to fetch the data");
 //			raise the exception addressidnotfoundexception
 		}
 	}
@@ -90,7 +91,7 @@ public class AddressService {
 			return new ResponseEntity<ResponseStructure<AddressDto>>(structure,HttpStatus.GONE);
 		}else {
 //			raise the exception
-			return null;
+			throw new AddressIdNotFoundException("Sorry Failed to fetch the data");
 		}
 	}
 
