@@ -21,8 +21,16 @@ public class MedicalStoreController {
 	private MediclastoreService service;
 	
 	@PostMapping
-	public ResponseEntity<ResponseStructure<MedicalStore>> saveMedicalStore
+	public ResponseEntity<ResponseStructure<MedicalStoreDto>> saveMedicalStore
 	(@RequestParam int adminId,@RequestParam int addressId, @RequestBody MedicalStoreDto medicalStoreDto){
 		return service.saveMedicalStore(adminId,addressId,medicalStoreDto);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 }

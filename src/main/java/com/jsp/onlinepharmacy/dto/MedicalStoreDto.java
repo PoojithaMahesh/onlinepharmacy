@@ -1,5 +1,8 @@
 package com.jsp.onlinepharmacy.dto;
 
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,4 +13,10 @@ public class MedicalStoreDto {
 	private String name;
 	private String managerName;
 	private long phone;
+	
+	@ManyToOne
+	private AdminDto adminDto;
+	
+	@OneToOne
+	private AddressDto addressDto; 
 }

@@ -25,7 +25,9 @@ public class AddressController {
 	
 	@PostMapping
 	public ResponseEntity<ResponseStructure<AddressDto>> saveAddress(@RequestBody Address address){
-		return service.saveAddress(address);
+		ResponseEntity<ResponseStructure<AddressDto>> entity=service.saveAddress(address);
+		System.out.println(entity);
+		return entity;
 	}
 	@GetMapping
 	public ResponseEntity<ResponseStructure<AddressDto>> findAddressById(@RequestParam int addressId){
