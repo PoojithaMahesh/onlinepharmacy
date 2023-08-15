@@ -1,5 +1,7 @@
 package com.jsp.onlinepharmacy.dao;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,30 @@ public class MedicalStoreDao {
 	public MedicalStore saveMedicalStore(MedicalStore medicalStore) {
 	
 		return repo.save(medicalStore);
+	}
+
+	public MedicalStore updateMedicalStore(int storeId, MedicalStore medicalStore) {
+//		medicalstore=name,managername ,address
+		Optional<MedicalStore> optional=repo.findById(storeId);
+	    if(optional.isPresent()) {
+	    	MedicalStore oldMedicalStore=optional.get();
+	    	medicalStore.setStoreId(storeId);
+//	    	medicalstore=id,name,managername ,address
+	    	medicalStore.setAdmin(oldMedicalStore.getAdmin());
+	    	medicalStore.setAddress(oldMedicalStore.getAddress());
+//	    	medicalstore is havig id,name,managername,phone,admin address
+	    	return repo.save(medicalStore);
+	    	
+	    }
+		return null;
+	}
+
+	public MedicalStore getMedicalStoreById(int storeId) {
+		if(repo.findById(storeId).isPresent()){
+			return repo.findById(storeId).get();
+		}
+		return null;
+		
 	}
 	
 

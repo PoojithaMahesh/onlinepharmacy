@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +35,9 @@ public class AddressController {
 		return service.findAddressById(addressId);
 	}
 
-	@PutMapping
+	@PutMapping("/{addressId}")
 	public ResponseEntity<ResponseStructure<AddressDto>> updateAddress
-	(@RequestParam int addressId,@RequestBody Address address){
+	(@PathVariable int addressId,@RequestBody Address address){
 		return service.updateAddress(addressId,address);
 	}
 	@DeleteMapping
