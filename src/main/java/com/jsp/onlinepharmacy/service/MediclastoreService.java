@@ -108,21 +108,26 @@ public class MediclastoreService {
 			throw new MedicalStoreIdNotFoundException("Sorry failed to fetch medicalstore");
 		}
 		
+
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	}
+
+	public ResponseEntity<ResponseStructure<MedicalStoreDto>> deleteMedicalstoreById(int storeId) {
+	     MedicalStore dbMedicalStore=storeDao.deleteMedicalstoreById(storeId);
+	 	if(dbMedicalStore!=null) {
+			MedicalStoreDto storeDto=this.modelMapper.map(dbMedicalStore, MedicalStoreDto.class);
+			storeDto.setAddressDto(this.modelMapper.map(dbMedicalStore.getAddress(), AddressDto.class));
+			storeDto.setAdminDto(this.modelMapper.map(dbMedicalStore.getAdmin(), AdminDto.class));
+			
+			ResponseStructure<MedicalStoreDto> structure=new ResponseStructure<MedicalStoreDto>();
+			structure.setMessage("MedicalStore deleted successfully");
+			structure.setStatus(HttpStatus.GONE.value());
+			structure.setData(storeDto);
+			return new ResponseEntity<ResponseStructure<MedicalStoreDto>>(structure,HttpStatus.GONE);
+		}else {
+//			when that id is not present
+			throw new MedicalStoreIdNotFoundException("Sorry failed to delete medicalstore");
+		}
 	}
 	
 

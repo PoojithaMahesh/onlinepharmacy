@@ -41,6 +41,16 @@ public class MedicalStoreDao {
 		return null;
 		
 	}
+
+	public MedicalStore deleteMedicalstoreById(int storeId) {
+		Optional<MedicalStore> optional=repo.findById(storeId);
+		if(optional.isPresent()){
+			 MedicalStore medicalStore=optional.get();
+			 repo.delete(medicalStore);
+			 return medicalStore;
+		}
+		return null;
+	}
 	
 
 }
