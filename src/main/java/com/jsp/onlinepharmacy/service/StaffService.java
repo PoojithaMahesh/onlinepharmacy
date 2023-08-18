@@ -78,6 +78,43 @@ public class StaffService {
 		}
 
 	}
+
+	public ResponseEntity<ResponseStructure<StaffDto>> getStaffById(int staffId) {
+	 Staff dbStaff=staffDao.getStaffById(staffId);
+	 if(dbStaff!=null){
+			StaffDto dbStaffDto=this.modelMapper.map(dbStaff, StaffDto.class);
+			dbStaffDto.setAdminDto(this.modelMapper.map(dbStaff.getAdmin(), AdminDto.class));
+			dbStaffDto.setMedicalStoreDto(this.modelMapper.map(dbStaff.getMedicalStore(), MedicalStoreDto.class));
+			
+			ResponseStructure<StaffDto> structure=new ResponseStructure<StaffDto>();
+			structure.setMessage("Staff data fetched successfully");
+			structure.setStatus(HttpStatus.OK.value());
+			structure.setData(dbStaffDto);
+			return new ResponseEntity<ResponseStructure<StaffDto>>(structure,HttpStatus.OK);
+	
+		}else {
+			throw new StaffIdNOtFoundException("sorry failed to get Staff");
+		}
+
+	}
+
+	public ResponseEntity<ResponseStructure<StaffDto>> deleteStaffById(int staffId) {
+		Staff dbStaff=staffDao.deleteStaffById(staffId);
+		if(dbStaff!=null){
+			StaffDto dbStaffDto=this.modelMapper.map(dbStaff, StaffDto.class);
+			dbStaffDto.setAdminDto(this.modelMapper.map(dbStaff.getAdmin(), AdminDto.class));
+			dbStaffDto.setMedicalStoreDto(this.modelMapper.map(dbStaff.getMedicalStore(), MedicalStoreDto.class));
+			
+			ResponseStructure<StaffDto> structure=new ResponseStructure<StaffDto>();
+			structure.setMessage("Staff data deleted successfully");
+			structure.setStatus(HttpStatus.GONE.value());
+			structure.setData(dbStaffDto);
+			return new ResponseEntity<ResponseStructure<StaffDto>>(structure,HttpStatus.GONE);
+	
+		}else {
+			throw new StaffIdNOtFoundException("sorry failed to delete Staff");
+		}
+	}
 	
 	
 }

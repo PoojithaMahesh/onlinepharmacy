@@ -10,6 +10,8 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +27,7 @@ public class MedicalStore {
 	private long phone;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Admin admin;
 	
 	@OneToOne

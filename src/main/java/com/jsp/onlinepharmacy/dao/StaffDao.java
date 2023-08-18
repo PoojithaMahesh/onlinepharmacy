@@ -28,6 +28,23 @@ public class StaffDao {
 	}
 		return null;
 	}
+
+	public Staff getStaffById(int staffId) {
+	Optional<Staff> optional=repo.findById(staffId);
+	if(optional.isPresent()) {
+		return optional.get();
+	}
+		return null;
+	}
+
+	public Staff deleteStaffById(int staffId) {
+		Optional<Staff> optional=repo.findById(staffId);
+		if(optional.isPresent()) {
+			repo.deleteById(staffId);
+			return optional.get();
+		}
+		return null;
+	}
 	
 
 }
