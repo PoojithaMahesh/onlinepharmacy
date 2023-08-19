@@ -16,7 +16,9 @@ import com.jsp.onlinepharmacy.dto.BookingDto;
 import com.jsp.onlinepharmacy.dto.CustomerDto;
 import com.jsp.onlinepharmacy.entity.Address;
 import com.jsp.onlinepharmacy.entity.Customer;
+import com.jsp.onlinepharmacy.exception.AddressAlreadyMappedToOtherCustomer;
 import com.jsp.onlinepharmacy.exception.AddressIdNotFoundException;
+import com.jsp.onlinepharmacy.exception.CustomerIdNotFoundException;
 import com.jsp.onlinepharmacy.util.ResponseStructure;
 
 @Service
@@ -30,8 +32,16 @@ public class CustomerService {
 
 	public ResponseEntity<ResponseStructure<CustomerDto>> addCustomer(int addressId, Customer customer) {
 		Address dbAddress=addressDao.findAddressById(addressId);
+//		when addressId =100 your db address==null
+//		dbAddress==is having id name also ereltionship entity that is your customer id=5
+		
+	
 //		checking addressId is present or not
 		if(dbAddress!=null) {
+			if(dbAddress.getCustomer()!=null) {
+				throw new AddressAlreadyMappedToOtherCustomer("sorry");
+			}
+			dbAddress.setCustomer(customer);
 //			yes addressId is present
 			List<Address> addresses=new ArrayList<Address>();
 			addresses.add(dbAddress);
@@ -61,6 +71,28 @@ public class CustomerService {
 			
 		}else {
 			throw new AddressIdNotFoundException("Sorry failed to add customer");
+		}
+	}
+
+	public ResponseEntity<ResponseStructure<CustomerDto>> updateCustomer(int customerId, Customer customer) {
+		Customer dbCustomer=custmerDao.updateCustomer(customerId,customer);
+		if(dbCustomer!=null) {
+			CustomerDto customerDto=this.modelMapper.map(dbCustomer, CustomerDto.class);
+			List<AddressDto> addressDtos;
+		for(Address address:dbCustomer.getAddresses()) {
+			AddressDto addressDto=this.modelMapper.map(address, AddressDto.class);
+			addressDtos=new ArrayList<AddressDto>();
+			addressDtos.add(addressDto);
+			customerDto.setAddresses(addressDtos);
+		} 
+			customerDto.setBookingDtos(null);
+			ResponseStructure<CustomerDto> structure=new ResponseStructure<CustomerDto>();
+			structure.setMessage("CustometrAddedsuccessfully");
+			structure.setStatus(HttpStatus.CREATED.value());
+			structure.setData(customerDto);
+			return new ResponseEntity<ResponseStructure<CustomerDto>>(structure,HttpStatus.CREATED);
+		}else {
+			throw new CustomerIdNotFoundException("Sorry failed to update Customer");
 		}
 	}
 
