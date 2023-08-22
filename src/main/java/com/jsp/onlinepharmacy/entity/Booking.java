@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ public class Booking {
 	private int quantity;
 	private String payMentMode;
 	private LocalDate expectedDate;
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	List<Medicine> medicines;
 	@ManyToOne
 	@JoinColumn

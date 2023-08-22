@@ -30,7 +30,7 @@ public class MedicalStore {
 	@JsonIgnore
 	private Admin admin;
 	
-	@OneToOne
+	@OneToOne(mappedBy = "medicalStore")
 	private Address address;
 	
 

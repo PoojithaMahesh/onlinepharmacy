@@ -2,6 +2,7 @@ package com.jsp.onlinepharmacy.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,9 +27,10 @@ public class Customer {
 	private String Email;
 	private String password;
 	private long phoneNumber;
-	@OneToMany(mappedBy = "customer")
+	@OneToMany(mappedBy = "customer",cascade = CascadeType.REMOVE)
 	private List<Address> addresses;
 	@OneToMany(mappedBy = "customer")
+	@JsonIgnore
 	private List<Booking> bookings;
 	
 	

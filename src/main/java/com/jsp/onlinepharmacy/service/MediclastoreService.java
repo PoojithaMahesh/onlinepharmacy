@@ -15,7 +15,9 @@ import com.jsp.onlinepharmacy.dto.MedicalStoreDto;
 import com.jsp.onlinepharmacy.entity.Address;
 import com.jsp.onlinepharmacy.entity.Admin;
 import com.jsp.onlinepharmacy.entity.MedicalStore;
+import com.jsp.onlinepharmacy.exception.AddressAlreadymappedtoCustomer;
 import com.jsp.onlinepharmacy.exception.AddressIdNotFoundException;
+import com.jsp.onlinepharmacy.exception.AddressMappedToMedicalStore;
 import com.jsp.onlinepharmacy.exception.AdminIdNotFoundException;
 import com.jsp.onlinepharmacy.exception.MedicalStoreIdNotFoundException;
 import com.jsp.onlinepharmacy.util.ResponseStructure;
@@ -44,7 +46,15 @@ public class MediclastoreService {
 			  medicalStore.setAdmin(dbAdmin);
 		       Address dbAddress= addressDao.findAddressById(addressId);
 		       if(dbAddress!=null) {
+		    	   if(dbAddress.getCustomer()!=null) {
+		    		   throw new AddressAlreadymappedtoCustomer("Sorry that address is mapped to customer so please give other address");
+		    	   }
+		    	   if(dbAddress.getMedicalStore()!=null) {
+		    		   throw new AddressMappedToMedicalStore("Sorry address mapped to other medical store");
+		    	   }
 		    	   medicalStore.setAddress(dbAddress);
+//		    	   update
+		    	   dbAddress.setMedicalStore(medicalStore);
 		    	   MedicalStore dbMedicalStore=storeDao.saveMedicalStore(medicalStore);
 		    	  Address dbMedicalStoreAddress=dbMedicalStore.getAddress();
 		    	  AddressDto addressDto=this.modelMapper.map(dbMedicalStoreAddress, AddressDto.class);

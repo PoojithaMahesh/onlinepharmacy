@@ -18,6 +18,7 @@ import com.jsp.onlinepharmacy.entity.Address;
 import com.jsp.onlinepharmacy.entity.Customer;
 import com.jsp.onlinepharmacy.exception.AddressAlreadyMappedToOtherCustomer;
 import com.jsp.onlinepharmacy.exception.AddressIdNotFoundException;
+import com.jsp.onlinepharmacy.exception.AddressMappedToMedicalStore;
 import com.jsp.onlinepharmacy.exception.CustomerIdNotFoundException;
 import com.jsp.onlinepharmacy.util.ResponseStructure;
 
@@ -38,8 +39,11 @@ public class CustomerService {
 	
 //		checking addressId is present or not
 		if(dbAddress!=null) {
+			if(dbAddress.getMedicalStore()!=null) {
+				throw new AddressMappedToMedicalStore("sorry this address is mapped to medicalstore");
+			}
 			if(dbAddress.getCustomer()!=null) {
-				throw new AddressAlreadyMappedToOtherCustomer("sorry");
+				throw new AddressAlreadyMappedToOtherCustomer("sorry this address is mapped to other customer");
 			}
 			dbAddress.setCustomer(customer);
 //			yes addressId is present
@@ -93,6 +97,50 @@ public class CustomerService {
 			return new ResponseEntity<ResponseStructure<CustomerDto>>(structure,HttpStatus.CREATED);
 		}else {
 			throw new CustomerIdNotFoundException("Sorry failed to update Customer");
+		}
+	}
+
+	public ResponseEntity<ResponseStructure<CustomerDto>> getCustomerById(int customerId) {
+	Customer dbCustomer=custmerDao.getCustomerById(customerId);
+	if(dbCustomer!=null) {
+		CustomerDto customerDto=this.modelMapper.map(dbCustomer, CustomerDto.class);
+		List<AddressDto> addressDtos;
+	for(Address address:dbCustomer.getAddresses()) {
+		AddressDto addressDto=this.modelMapper.map(address, AddressDto.class);
+		addressDtos=new ArrayList<AddressDto>();
+		addressDtos.add(addressDto);
+		customerDto.setAddresses(addressDtos);
+	} 
+		customerDto.setBookingDtos(null);
+		ResponseStructure<CustomerDto> structure=new ResponseStructure<CustomerDto>();
+		structure.setMessage("Customer data fetched successfully");
+		structure.setStatus(HttpStatus.FOUND.value());
+		structure.setData(customerDto);
+		return new ResponseEntity<ResponseStructure<CustomerDto>>(structure,HttpStatus.FOUND);
+	}else {
+		throw new CustomerIdNotFoundException("Sorry failed to fetch Customer");
+	}
+	}
+
+	public ResponseEntity<ResponseStructure<CustomerDto>> deleteCustomerById(int customerId) {
+		Customer dbCustomer=custmerDao.deleteCustomerById(customerId);
+		if(dbCustomer!=null) {
+			CustomerDto customerDto=this.modelMapper.map(dbCustomer, CustomerDto.class);
+			List<AddressDto> addressDtos;
+		for(Address address:dbCustomer.getAddresses()) {
+			AddressDto addressDto=this.modelMapper.map(address, AddressDto.class);
+			addressDtos=new ArrayList<AddressDto>();
+			addressDtos.add(addressDto);
+			customerDto.setAddresses(addressDtos);
+		} 
+			customerDto.setBookingDtos(null);
+			ResponseStructure<CustomerDto> structure=new ResponseStructure<CustomerDto>();
+			structure.setMessage("Customer data deleted successfully");
+			structure.setStatus(HttpStatus.GONE.value());
+			structure.setData(customerDto);
+			return new ResponseEntity<ResponseStructure<CustomerDto>>(structure,HttpStatus.GONE);
+		}else {
+			throw new CustomerIdNotFoundException("Sorry failed to delete Customer");
 		}
 	}
 

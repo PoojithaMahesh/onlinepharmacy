@@ -2,6 +2,8 @@ package com.jsp.onlinepharmacy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +34,14 @@ public class CustomerController {
 			@RequestBody Customer customer){
 		return service.updateCustomer(customerId,customer);
 	}
-	
+	@GetMapping
+	public ResponseEntity<ResponseStructure<CustomerDto>> getCustomerById(@RequestParam int customerId){
+		return service.getCustomerById(customerId);
+	}
+	@DeleteMapping
+	public ResponseEntity<ResponseStructure<CustomerDto>> deleteCustomerById(@RequestParam int customerId){
+		return service.deleteCustomerById(customerId);
+	}
 	
 	
 	

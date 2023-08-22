@@ -12,4 +12,6 @@ public class BookingDto {
 	private int quantity;
 	private String payMentMode;
 	private LocalDate expectedDate;
+	
+	
 }

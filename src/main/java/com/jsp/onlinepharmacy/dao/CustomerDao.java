@@ -31,5 +31,25 @@ public class CustomerDao {
 		return null;
 	}
 
+	public Customer getCustomerById(int customerId) {
+		Optional<Customer> optional=repo.findById(customerId);
+		if(optional.isPresent()) {
+			return optional.get();
+		}
+		return null;
+	}
+
+	public Customer deleteCustomerById(int customerId) {
+		Optional<Customer> optional=repo.findById(customerId);
+		if(optional.isPresent()) {
+			Customer customer= optional.get();
+			
+			repo.delete(customer);
+			return customer;
+		}
+		
+		return null;
+	}
+
 
 }
