@@ -84,6 +84,30 @@ public class OnlinePharmacyExceptionHandler extends ResponseEntityExceptionHandl
 		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
 	}
 	@ExceptionHandler
+	public ResponseEntity<ResponseStructure<String>> bookingalreadycancelldException(BookingAlreadyCancelled  ex){
+		 ResponseStructure<String> structure=new  ResponseStructure<String>();
+		 structure.setMessage("Booking Already cancelled");
+		 structure.setStatus(HttpStatus.NOT_FOUND.value());
+		 structure.setData(ex.getMessage());
+		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler
+	public ResponseEntity<ResponseStructure<String>> bookingalreadydeliveredException(BookingDeliveredException  ex){
+		 ResponseStructure<String> structure=new  ResponseStructure<String>();
+		 structure.setMessage("Booking Already delievered");
+		 structure.setStatus(HttpStatus.NOT_FOUND.value());
+		 structure.setData(ex.getMessage());
+		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler
+	public ResponseEntity<ResponseStructure<String>> bookingException(BookingCantCancelledNow  ex){
+		 ResponseStructure<String> structure=new  ResponseStructure<String>();
+		 structure.setMessage("Booking Cant cancelled now because expected date is near");
+		 structure.setStatus(HttpStatus.NOT_FOUND.value());
+		 structure.setData(ex.getMessage());
+		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler
 	public ResponseEntity<ResponseStructure<String>> bookingIdNotFoundException(BookingIdNotFoundException  ex){
 		 ResponseStructure<String> structure=new  ResponseStructure<String>();
 		 structure.setMessage("Booking Id Not Found");

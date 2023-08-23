@@ -1,12 +1,12 @@
 package com.jsp.onlinepharmacy.dao;
 
-import java.awt.print.Book;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jsp.onlinepharmacy.entity.Booking;
+import com.jsp.onlinepharmacy.enums.BookingStatus;
 import com.jsp.onlinepharmacy.repository.BookingRepo;
 
 @Repository
@@ -23,7 +23,15 @@ public class BookingDao {
 	public Booking cancelBooking(int bookingId) {
 		Optional<Booking> optional=repo.findById(bookingId);
 		if(optional.isPresent()) {
-			repo.delete(optional.get());
+			optional.get().setBookingStatus(BookingStatus.CANCELLED);
+			return repo.save(optional.get());
+		}
+		return null;
+	}
+
+	public Booking findBookingById(int bookingId) {
+		Optional<Booking> optional=repo.findById(bookingId);
+		if(optional.isPresent()) {
 			return optional.get();
 		}
 		return null;

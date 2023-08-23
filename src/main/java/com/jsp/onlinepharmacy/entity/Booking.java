@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.jsp.onlinepharmacy.enums.BookingStatus;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +28,9 @@ public class Booking {
 	private int quantity;
 	private String payMentMode;
 	private LocalDate expectedDate;
+	private BookingStatus bookingStatus;
+	
+	
 	@ManyToMany(fetch = FetchType.EAGER)
 	List<Medicine> medicines;
 	@ManyToOne

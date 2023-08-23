@@ -1,6 +1,7 @@
 package com.jsp.onlinepharmacy.service;
 
 import java.awt.print.Book;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,10 @@ import com.jsp.onlinepharmacy.dto.BookingDto;
 import com.jsp.onlinepharmacy.entity.Booking;
 import com.jsp.onlinepharmacy.entity.Customer;
 import com.jsp.onlinepharmacy.entity.Medicine;
+import com.jsp.onlinepharmacy.enums.BookingStatus;
+import com.jsp.onlinepharmacy.exception.BookingAlreadyCancelled;
+import com.jsp.onlinepharmacy.exception.BookingCantCancelledNow;
+import com.jsp.onlinepharmacy.exception.BookingDeliveredException;
 import com.jsp.onlinepharmacy.exception.BookingIdNotFoundException;
 import com.jsp.onlinepharmacy.exception.CustomerIdNotFoundException;
 import com.jsp.onlinepharmacy.exception.MedicineIdNotFoundException;
@@ -55,7 +60,8 @@ public class BookingService {
 				customerDao.updateCustomer(customerId, dbCustomer);
 //				updating stock quantity
 				dbMedicine.setStockQuantity(dbMedicine.getStockQuantity()-booking.getQuantity());
-				
+//				im adding booking status
+				booking.setBookingStatus(BookingStatus.ACTIVE);
 				
 				Booking dbBooking = bookingDao.saveBooking(booking);
 
@@ -76,16 +82,33 @@ public class BookingService {
 	}
 
 	public ResponseEntity<ResponseStructure<Booking>> cancelBooking(int bookingId) {
-		Booking dbBooking=bookingDao.cancelBooking(bookingId);
 		
+	
+		
+		
+		Booking dbBooking=bookingDao.findBookingById(bookingId);
+		
+		LocalDate cantcancelledday=dbBooking.getExpectedDate().minusDays(2);
+//		Expected date=24
+//		cantcancelleddate=24-2=22;
+		
+		if(LocalDate.now().equals(cantcancelledday)||LocalDate.now().isAfter(cantcancelledday)) {
+			throw new BookingCantCancelledNow("Sorry booking cant cancelled Now");
+		}
 		if(dbBooking!=null) {
-
-			ResponseStructure<Booking> structure = new ResponseStructure<Booking>();
-			structure.setMessage("Booking cancelled successfully");
-			structure.setStatus(HttpStatus.GONE.value());
-			structure.setData(dbBooking);
-			return new ResponseEntity<ResponseStructure<Booking>>(structure, HttpStatus.GONE);
-			
+           if(dbBooking.getBookingStatus().equals(BookingStatus.CANCELLED)) {
+        	   throw new BookingAlreadyCancelled("sorry this booking already Cancelled");
+           }else if(dbBooking.getBookingStatus().equals(BookingStatus.DELIVERED)) {
+        	   throw new BookingDeliveredException("Sorry cant cancel Booking its already delivered");
+           }else {
+        	   Booking cancelledBooking=bookingDao.cancelBooking(bookingId);
+        	   ResponseStructure<Booking> structure=new ResponseStructure<Booking>();
+        	   structure.setMessage("Booking cancelled Successfully");
+       	   structure.setStatus(HttpStatus.OK.value());
+        	   structure.setData(cancelledBooking);
+               return new ResponseEntity<ResponseStructure<Booking>>(structure,HttpStatus.OK);       	   
+           }
+	
 		}else {
 			throw new BookingIdNotFoundException("Sorry failed to cancel booking");
 		}
