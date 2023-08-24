@@ -20,6 +20,30 @@ public class OnlinePharmacyExceptionHandler extends ResponseEntityExceptionHandl
 		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
 	}
 	@ExceptionHandler
+	public ResponseEntity<ResponseStructure<String>> addressIdNotFoundException(InvalidPasswordException ex){
+		 ResponseStructure<String> structure=new  ResponseStructure<String>();
+		 structure.setMessage("Sorry its a incorrect password");
+		 structure.setStatus(HttpStatus.NOT_FOUND.value());
+		 structure.setData(ex.getMessage());
+		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler
+	public ResponseEntity<ResponseStructure<String>> PhoneNottFoundException(PhoneNumberNotValidException ex){
+		 ResponseStructure<String> structure=new  ResponseStructure<String>();
+		 structure.setMessage("Sorry its not a registered phonenumber");
+		 structure.setStatus(HttpStatus.NOT_FOUND.value());
+		 structure.setData(ex.getMessage());
+		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler
+	public ResponseEntity<ResponseStructure<String>> emailNotFoundException(EmailNotFoundException  ex){
+		 ResponseStructure<String> structure=new  ResponseStructure<String>();
+		 structure.setMessage("Sorry email is not present");
+		 structure.setStatus(HttpStatus.NOT_FOUND.value());
+		 structure.setData(ex.getMessage());
+		 return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler
 	public ResponseEntity<ResponseStructure<String>> staffIdNotFoundException(StaffIdNOtFoundException  ex){
 		 ResponseStructure<String> structure=new  ResponseStructure<String>();
 		 structure.setMessage("STaff Not Found");

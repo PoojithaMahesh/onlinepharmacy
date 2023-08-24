@@ -23,8 +23,9 @@ public class BookingDao {
 	public Booking cancelBooking(int bookingId) {
 		Optional<Booking> optional=repo.findById(bookingId);
 		if(optional.isPresent()) {
-			optional.get().setBookingStatus(BookingStatus.CANCELLED);
-			return repo.save(optional.get());
+		Booking booking=optional.get();
+			booking.setBookingStatus(BookingStatus.CANCELLED);
+			return repo.save(booking);
 		}
 		return null;
 	}

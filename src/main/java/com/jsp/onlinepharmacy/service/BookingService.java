@@ -82,24 +82,21 @@ public class BookingService {
 	}
 
 	public ResponseEntity<ResponseStructure<Booking>> cancelBooking(int bookingId) {
+	Booking dbBooking=bookingDao.findBookingById(bookingId);
 		
-	
 		
-		
-		Booking dbBooking=bookingDao.findBookingById(bookingId);
-		
-		LocalDate cantcancelledday=dbBooking.getExpectedDate().minusDays(2);
 //		Expected date=24
 //		cantcancelleddate=24-2=22;
 		
-		if(LocalDate.now().equals(cantcancelledday)||LocalDate.now().isAfter(cantcancelledday)) {
-			throw new BookingCantCancelledNow("Sorry booking cant cancelled Now");
-		}
+		
 		if(dbBooking!=null) {
+			LocalDate cantcancelledday=dbBooking.getExpectedDate().minusDays(2);
            if(dbBooking.getBookingStatus().equals(BookingStatus.CANCELLED)) {
         	   throw new BookingAlreadyCancelled("sorry this booking already Cancelled");
            }else if(dbBooking.getBookingStatus().equals(BookingStatus.DELIVERED)) {
         	   throw new BookingDeliveredException("Sorry cant cancel Booking its already delivered");
+           }else if(LocalDate.now().equals(cantcancelledday)||LocalDate.now().isAfter(cantcancelledday)) {
+       			throw new BookingCantCancelledNow("Sorry booking cant cancelled Now");
            }else {
         	   Booking cancelledBooking=bookingDao.cancelBooking(bookingId);
         	   ResponseStructure<Booking> structure=new ResponseStructure<Booking>();

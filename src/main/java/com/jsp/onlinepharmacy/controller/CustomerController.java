@@ -43,9 +43,15 @@ public class CustomerController {
 		return service.deleteCustomerById(customerId);
 	}
 	
+	@GetMapping("/login")
+	public ResponseEntity<ResponseStructure<CustomerDto>> loginCustomer(@RequestParam String email,@RequestParam String password){
+		return service.loginCustomer(email,password);
+	}
 	
-	
-	
+	@PutMapping("/forgotpassword")
+	public ResponseEntity<ResponseStructure<CustomerDto>> forgotPassword(@RequestParam String email,@RequestParam long phone,@RequestParam String password){
+		return service.forgotPassword(email,phone,password);
+	}
 	
 	
 	

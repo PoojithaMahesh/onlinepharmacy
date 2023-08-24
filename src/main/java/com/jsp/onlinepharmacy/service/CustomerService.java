@@ -15,11 +15,15 @@ import com.jsp.onlinepharmacy.dto.AddressDto;
 import com.jsp.onlinepharmacy.dto.BookingDto;
 import com.jsp.onlinepharmacy.dto.CustomerDto;
 import com.jsp.onlinepharmacy.entity.Address;
+import com.jsp.onlinepharmacy.entity.Booking;
 import com.jsp.onlinepharmacy.entity.Customer;
 import com.jsp.onlinepharmacy.exception.AddressAlreadyMappedToOtherCustomer;
 import com.jsp.onlinepharmacy.exception.AddressIdNotFoundException;
 import com.jsp.onlinepharmacy.exception.AddressMappedToMedicalStore;
 import com.jsp.onlinepharmacy.exception.CustomerIdNotFoundException;
+import com.jsp.onlinepharmacy.exception.EmailNotFoundException;
+import com.jsp.onlinepharmacy.exception.InvalidPasswordException;
+import com.jsp.onlinepharmacy.exception.PhoneNumberNotValidException;
 import com.jsp.onlinepharmacy.util.ResponseStructure;
 
 @Service
@@ -141,6 +145,85 @@ public class CustomerService {
 			return new ResponseEntity<ResponseStructure<CustomerDto>>(structure,HttpStatus.GONE);
 		}else {
 			throw new CustomerIdNotFoundException("Sorry failed to delete Customer");
+		}
+	}
+
+	public ResponseEntity<ResponseStructure<CustomerDto>> loginCustomer(String email, String password) {
+		Customer dbCustomer=custmerDao.findByEmail(email);
+		if(dbCustomer!=null) {
+			if(dbCustomer.getPassword().equals(password)) {
+//				login success
+				CustomerDto customerDto=this.modelMapper.map(dbCustomer, CustomerDto.class);
+				List<AddressDto> addressDtos;
+			for(Address address:dbCustomer.getAddresses()) {
+				AddressDto addressDto=this.modelMapper.map(address, AddressDto.class);
+				addressDtos=new ArrayList<AddressDto>();
+				addressDtos.add(addressDto);
+				customerDto.setAddresses(addressDtos);
+			} 
+			List<BookingDto> bookingDtos;
+			for(Booking booking:dbCustomer.getBookings()) {
+				BookingDto bookingDto=this.modelMapper.map(booking, BookingDto.class);
+				bookingDtos=new ArrayList<BookingDto>();
+				bookingDtos.add(bookingDto);
+				customerDto.setBookingDtos(bookingDtos);
+			}
+				
+				ResponseStructure<CustomerDto> structure=new ResponseStructure<CustomerDto>();
+				structure.setMessage("Customer Login Success WELCOME TO ONLINEPHARMACY");
+				structure.setStatus(HttpStatus.OK.value());
+				structure.setData(customerDto);
+				return new ResponseEntity<ResponseStructure<CustomerDto>>(structure,HttpStatus.OK);
+				
+			}else {
+//				invalid password
+				throw new InvalidPasswordException("Sorry failed to Login");
+			}
+			
+			
+		}else {
+			throw new EmailNotFoundException("Sorry Failed to Login");
+		}
+	}
+
+	public ResponseEntity<ResponseStructure<CustomerDto>> forgotPassword(String email, long phone,String password) {
+	   Customer customer=custmerDao.findByEmail(email);
+		if(customer!=null) {
+//			customer is present
+			if(customer.getPhoneNumber()==phone) {
+//				phone is registered
+				customer.setPassword(password);
+				Customer dbCustomer=custmerDao.updateCustomer(customer.getCustomerId(), customer);
+				
+				
+				CustomerDto customerDto=this.modelMapper.map(dbCustomer, CustomerDto.class);
+				List<AddressDto> addressDtos;
+			for(Address address:dbCustomer.getAddresses()) {
+				AddressDto addressDto=this.modelMapper.map(address, AddressDto.class);
+				addressDtos=new ArrayList<AddressDto>();
+				addressDtos.add(addressDto);
+				customerDto.setAddresses(addressDtos);
+			} 
+			List<BookingDto> bookingDtos;
+			for(Booking booking:dbCustomer.getBookings()) {
+				BookingDto bookingDto=this.modelMapper.map(booking, BookingDto.class);
+				bookingDtos=new ArrayList<BookingDto>();
+				bookingDtos.add(bookingDto);
+				customerDto.setBookingDtos(bookingDtos);
+			}
+				
+				ResponseStructure<CustomerDto> structure=new ResponseStructure<CustomerDto>();
+				structure.setMessage("Customer Pssword reset successfully");
+				structure.setStatus(HttpStatus.OK.value());
+				structure.setData(customerDto);
+				return new ResponseEntity<ResponseStructure<CustomerDto>>(structure,HttpStatus.OK);
+				
+				
+			}else {
+				throw new PhoneNumberNotValidException("Sorry failed to reset password Please enter Registered PhoneNumber");
+			}
+		}else {
+			throw new EmailNotFoundException("Sorry failed to reset password Please enter valid Email");
 		}
 	}
 
