@@ -1,6 +1,6 @@
 package com.jsp.onlinepharmacy.service;
 
-import java.awt.print.Book;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,44 +38,40 @@ public class BookingService {
 	@Autowired
 	private MedicineDao medicineDao;
 
-	public ResponseEntity<ResponseStructure<Booking>> addBooking(int customerId, int medicineId,
+	public ResponseEntity<ResponseStructure<Booking>> addBooking(int customerId, int[] medicineId,
 			BookingDto bookingDto) {
 		Booking booking = this.modelMapper.map(bookingDto, Booking.class);
 		Customer dbCustomer = customerDao.getCustomerById(customerId);
 		if (dbCustomer != null) {
 //			customer is present
-			Medicine dbMedicine = medicineDao.getMedicineByid(medicineId);
-			if (dbMedicine != null) {
-//			medicine is present
-
-				List<Medicine> medicines = new ArrayList<Medicine>();
-				medicines.add(dbMedicine);
-				booking.setCustomer(dbCustomer);
-				booking.setMedicines(medicines);
-
-//			update customer also
-				List<Booking> bookings = new ArrayList<Booking>();
-				bookings.add(booking);
-				dbCustomer.setBookings(bookings);
-				customerDao.updateCustomer(customerId, dbCustomer);
-//				updating stock quantity
-				dbMedicine.setStockQuantity(dbMedicine.getStockQuantity()-booking.getQuantity());
-//				im adding booking status
-				booking.setBookingStatus(BookingStatus.ACTIVE);
-				
-				Booking dbBooking = bookingDao.saveBooking(booking);
-
-				
-				ResponseStructure<Booking> structure = new ResponseStructure<Booking>();
-				structure.setMessage("Booking added successfully");
-				structure.setStatus(HttpStatus.CREATED.value());
-				structure.setData(dbBooking);
-				return new ResponseEntity<ResponseStructure<Booking>>(structure, HttpStatus.CREATED);
-
-			} else {
-				throw new MedicineIdNotFoundException("Sorry failed to add booking");
-			}
-
+			booking.setCustomer(dbCustomer);
+			List<Medicine> medicines=new ArrayList<Medicine>();
+			for(int medId:medicineId) {
+				Medicine dbMedicine=medicineDao.getMedicineByid(medId);
+				if(dbMedicine!=null) {
+					medicines.add(dbMedicine);
+//					updating stock quantity
+					dbMedicine.setStockQuantity(dbMedicine.getStockQuantity()-booking.getQuantity());
+				}else {
+					throw new MedicineIdNotFoundException("sorry failed to add booking");
+				}
+		}
+			booking.setMedicines(medicines);
+//            update CustomerAlso
+			List<Booking> bookings=new ArrayList<Booking>();
+			bookings.add(booking);
+			dbCustomer.setBookings(bookings);
+			customerDao.updateCustomer(customerId, dbCustomer);
+//im adding booking status
+			booking.setBookingStatus(BookingStatus.ACTIVE);
+			Booking dbBooking=bookingDao.saveBooking(booking);
+			
+			ResponseStructure<Booking> structure=new ResponseStructure<Booking>();
+			structure.setMessage("Booking added successfully");
+			structure.setStatus(HttpStatus.CREATED.value());
+			structure.setData(dbBooking);
+			return new ResponseEntity<ResponseStructure<Booking>>(structure,HttpStatus.CREATED);
+			
 		} else {
 			throw new CustomerIdNotFoundException("Sorry failed to add booking");
 		}
